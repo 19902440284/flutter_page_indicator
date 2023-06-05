@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_page_indicator/flutter_page_indicator.dart';
 
-import "package:transformer_page_view/transformer_page_view.dart";
-
 void main() => runApp(new MyApp());
 
 class MyApp extends StatelessWidget {
@@ -29,7 +27,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key? key, required this.title}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -51,7 +49,8 @@ class RadioGroup extends StatefulWidget {
 
   final ValueChanged<int> onIndexChanged;
 
-  const RadioGroup({Key key, this.titles, this.onIndexChanged})
+  const RadioGroup(
+      {Key? key, required this.titles, required this.onIndexChanged})
       : super(key: key);
 
   @override
@@ -74,11 +73,12 @@ class _RadioGroupState extends State<RadioGroup> {
             new Radio<int>(
                 value: index,
                 groupValue: _index,
-                onChanged: (int index) {
-                  setState(() {
-                    _index = index;
-                    widget.onIndexChanged(_index);
-                  });
+                onChanged: (int? index) {
+                  if (index != null)
+                    setState(() {
+                      _index = index;
+                      widget.onIndexChanged(_index);
+                    });
                 }),
             new Text(title)
           ],
@@ -93,12 +93,10 @@ class _RadioGroupState extends State<RadioGroup> {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _index = 1;
-
   double size = 20.0;
   double activeSize = 30.0;
 
-  PageController controller;
+  late PageController controller;
 
   PageIndicatorLayout layout = PageIndicatorLayout.SLIDE;
 
@@ -143,18 +141,17 @@ class _MyHomePageState extends State<MyHomePage> {
               children: <Widget>[
                 new Checkbox(
                     value: loop,
-                    onChanged: (bool value) {
-                      setState(() {
-                        if (value) {
-                          controller = new TransformerPageController(
-                              itemCount: 4, loop: true);
-                        } else {
-                          controller = new PageController(
-                            initialPage: 0,
-                          );
-                        }
-                        loop = value;
-                      });
+                    onChanged: (bool? value) {
+                      if (value != null)
+                        setState(() {
+                          if (value) {
+                          } else {
+                            controller = new PageController(
+                              initialPage: 0,
+                            );
+                          }
+                          loop = value;
+                        });
                     }),
                 new Text("loop"),
               ],
@@ -166,7 +163,6 @@ class _MyHomePageState extends State<MyHomePage> {
               }).toList(),
               onIndexChanged: (int index) {
                 setState(() {
-                  _index = index;
                   layout = layouts[index];
                 });
               },
@@ -175,10 +171,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: new Stack(
               children: <Widget>[
                 loop
-                    ? new TransformerPageView.children(
-                        children: children,
-                        pageController: controller,
-                      )
+                    ? SizedBox()
                     : new PageView(
                         controller: controller,
                         children: children,
